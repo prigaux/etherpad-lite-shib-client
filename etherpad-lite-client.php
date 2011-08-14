@@ -33,6 +33,10 @@ class EtherpadLiteClient {
       $result = file_get_contents($url);
     }
     
+    $result = json_decode($result);
+    if ($result === NULL){
+      throw new UnexpectedValueException("JSON response could not be decoded");
+    }
     return $result;
   }
 
