@@ -7,9 +7,12 @@ class EtherpadLiteClient {
   protected $baseUrl = "http://localhost:9001/api";
   
   public function __construct($apiKey, $baseUrl = null){
-    $this->apiKey  = $userkey;
+    $this->apiKey  = $apiKey;
     if (isset($baseUrl)){
       $this->baseUrl = $baseUrl;
+    }
+    if (!filter_var($this->baseUrl, FILTER_VALIDATE_URL)){
+      throw new InvalidArgumentException("[{$this->baseUrl}] is not a valid URL");
     }
   }
 
@@ -21,7 +24,7 @@ class EtherpadLiteClient {
     $url = $this->baseUrl."/".self::API_VERSION."/".$function."?".http_build_query($query);
 
     // not all PHP installs have access to curl
-    if (function_exists('curl_init') && false){
+    if (function_exists('curl_init')){
       $c = curl_init($url);
       curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
       $result = curl_exec($c);
