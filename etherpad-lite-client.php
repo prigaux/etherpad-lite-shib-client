@@ -1,42 +1,35 @@
 <?php
-class EtherpadLiteClient
-{
-  
-  // INIT
-  // Functions to setup the object
-  
-  private $apikey = "";
-  private $baseurl = "http://localhost:9001/api";
-  private $apiversion = 1;
+class EtherpadLiteClient {
 
-  function setParams($userkey)
-  {
-    $this->apikey  = $userkey;
+  const API_VERSION = 1;
+
+  protected $apiKey = "";
+  protected $baseUrl = "http://localhost:9001/api";
+  
+  public function __construct($apiKey, $baseUrl = null){
+    $this->apiKey  = $userkey;
+    if (isset($baseUrl)){
+      $this->baseUrl = $baseUrl;
+    }
   }
 
-  private function HTTPCall()
-  {
-    $args = func_num_args();
+  protected function call($function, array $arguments = array()){
+    $query = array_merge(
+      array('apikey' => $this->apiKey),
+      $arguments
+    );
+    $url = $this->baseUrl."/".self::API_VERSION."/".$function."?".http_build_query($query);
 
-    // Need a function to call, otherwise just give up
-    if($args == 0) {
-      return 1;
+    // not all PHP installs have access to curl
+    if (function_exists('curl_init') && false){
+      $c = curl_init($url);
+      curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+      $result = curl_exec($c);
+      curl_close($c);
+    } else {
+      $result = file_get_contents($url);
     }
-
-    $call = $this->baseurl . "/" . $this->apiversion . "/" . func_get_arg(0) . "?apikey=" . $this->apikey;
-
-    // Append arguments to the call
-    $arg_list = func_get_args();
-    if($args > 1) {
-      for($i = 1; $i < $args; $i = $i+2) {
-        $call = $call . "&" . func_get_arg($i) . "=" . func_get_arg($i+1);
-      }
-    }
-
-    $conn = curl_init($call);
-    curl_setopt($conn, CURLOPT_RETURNTRANSFER, True);
-    $result = curl_exec($conn);
-    curl_close($conn);
+    
     return $result;
   }
 
@@ -44,46 +37,49 @@ class EtherpadLiteClient
   // Pads can belong to a group. There will always be public pads that doesnt belong to a group (or we give this group the id 0)
   
   // creates a new group 
-  function createGroup()
-  {
-    return $this->HTTPCall("createGroup");
+  public function createGroup(){
+    return $this->call("createGroup");
   }
 
   // this functions helps you to map your application group ids to etherpad lite group ids 
-  function getMappedGroup4($groupMapper)
-  {
+  public function getMappedGroup4($groupMapper){
   }
 
   // deletes a group 
-  function deleteGroup($groupID)
-  {
-    return $this->HTTPCall("deleteGroup", "groupID", $groupID);
+  public function deleteGroup($groupID){
+    return $this->call("deleteGroup", array(
+      "groupID" => $groupID
+    ));
   }
 
   // returns all pads of this group
-  function listPads($groupID)
-  {
-    return $this->HTTPCall("listPads", "groupID", $groupID);
+  public function listPads($groupID){
+    return $this->call("listPads", array(
+      "groupID" => $groupID
+    ));
   }
 
   // creates a new pad in this group 
-  function createGroupPad($groupID, $padName, $text)
-  {
-    return $this->HTTPCall("createGroupPad", "groupID", $groupID, "padName", $padName, "text", $text);
+  public function createGroupPad($groupID, $padName, $text){
+    return $this->call("createGroupPad", array(
+      "groupID" => $groupID,
+      "padName" => $padName,
+      "text"    => $text
+    ));
   }
 
   // AUTHORS
   // Theses authors are bind to the attributes the users choose (color and name). 
 
   // creates a new author 
-  function createAuthor($name)
-  {
-    return $this->HTTPCall("createAuthor", "name", $name);
+  public function createAuthor($name){
+    return $this->call("createAuthor", array(
+      "name" => $name
+    ));
   }
 
   // this functions helps you to map your application author ids to etherpad lite author ids 
-  function getMappedAuthor4($authorMapper, $name)
-  {
+  public function getMappedAuthor4($authorMapper, $name){
   }
 
   // SESSIONS
@@ -92,48 +88,59 @@ class EtherpadLiteClient
   // a cookie to the client and is valid until a certian date.
 
   // creates a new session 
-  function createSession($groupID, $authorID, $validUntil)
-  {
-    return $this->HTTPCall("createSession", "groupID", $groupID, "authorID", $authorID, "validUntil", $validUntil);
+  public function createSession($groupID, $authorID, $validUntil){
+    return $this->call("createSession", array(
+      "groupID"    => $groupID,
+      "authorID"   => $authorID,
+      "validUntil" => $validUntil
+    ));
   }
 
   // deletes a session 
-  function deleteSession($sessionID)
-  {
-    return $this->HTTPCall("deleteSession", "sessionID", $sessionID);
+  public function deleteSession($sessionID){
+    return $this->call("deleteSession", array(
+      "sessionID" => $sessionID
+    ));
   }
 
   // returns informations about a session 
-  function getSessionInfo($sessionID)
-  {
-    return $this->HTTPCall("getSessionInfo", "sessionID", $sessionID);
+  public function getSessionInfo($sessionID){
+    return $this->call("getSessionInfo", array(
+      "sessionID" => $sessionID
+    ));
   }
 
   // returns all sessions of a group 
-  function listSessionsOfGroup($groupID)
-  {
-    return $this->HTTPCall("listSessionOfGroup", "groupID", $groupID);
+  public function listSessionsOfGroup($groupID){
+    return $this->call("listSessionOfGroup", array(
+      "groupID" => $groupID
+    ));
   }
 
   // returns all sessions of an author 
-  function listSessionsOfAuthor($authorID)
-  {
-    return $this->HTTPCall("listSessionsOfAuthor", "authorID", $authorID);
+  public function listSessionsOfAuthor($authorID){
+    return $this->call("listSessionsOfAuthor", array(
+      "authorID" => $authorID
+    ));
   }
 
   // PAD CONTENT
   // Pad content can be updated and retrieved through the API
 
   // returns the text of a pad 
-  function getText($padID) // should take optional $rev
-  {
-    return $this->HTTPCall("getText", "padID", $padID);
+  // should take optional $rev
+  public function getText($padID){
+    return $this->call("getText", array(
+      "padID" => $padID
+    ));
   }
 
   // sets the text of a pad 
-  function setText($padID, $text)
-  {
-    return $this->HTTPCall("setText", "padID", $padID, "text", $text);
+  public function setText($padID, $text){
+    return $this->call("setText", array(
+      "padID" => $padID, 
+      "text"  => $text
+    ));
   }
 
   // PAD
@@ -142,51 +149,62 @@ class EtherpadLiteClient
   // forbidden for normal pads to include a $ in the name.
 
   // creates a new pad
-  function createPad($padID, $text)
-  {
-    return $this->HTTPCall("createPad", "padID", $padID, "text", $text);
+  public function createPad($padID, $text){
+    return $this->call("createPad", array(
+      "padID" => $padID, 
+      "text"  => $text
+    ));
   }
 
   // returns the number of revisions of this pad 
-  function getRevisionsCount($padID)
-  {
-    return $this->HTTPCall("getRevisionsCount", "padID", $padID);
+  public function getRevisionsCount($padID){
+    return $this->call("getRevisionsCount", array(
+      "padID" => $padID
+    ));
   }
 
   // deletes a pad 
-  function deletePad($padID)
-  {
-    return $this->HTTPCall("deletePad", "padID", $padID);
+  public function deletePad($padID){
+    return $this->call("deletePad", array(
+      "padID" => $padID
+    ));
   }
 
   // returns the read only link of a pad 
-  function getReadOnlyID($padID)
-  {
-    return $this->HTTPCall("getReadOnlyID", "padID", $padID);
+  public function getReadOnlyID($padID){
+    return $this->call("getReadOnlyID", array(
+      "padID" => $padID
+    ));
   }
 
   // sets a boolean for the public status of a pad 
-  function setPublicStatus($padID, $publicStatus)
-  {
-    return $this->HTTPCall("setPublicStatus", "padID", $padID, "publicStatus", $publicStatus);
+  public function setPublicStatus($padID, $publicStatus){
+    return $this->call("setPublicStatus", array(
+      "padID"        => $padID,
+      "publicStatus" => $publicStatus
+    ));
   }
 
   // return true of false 
-  function getPublicStatus($padID)
-  {
-    return $this->HTTPCall("getPublicStatus", "padID", $padID);
+  public function getPublicStatus($padID){
+    return $this->call("getPublicStatus", array(
+      "padID" => $padID
+    ));
   }
 
   // returns ok or a error message 
-  function setPassword($padID, $password)
-  {
-    return $this->HTTPCall("setPassword", "padID", $padID, "password", $password);
+  public function setPassword($padID, $password){
+    return $this->call("setPassword", array(
+      "padID"    => $padID,
+      "password" => $password
+    ));
   }
 
   // returns true or false 
-  function isPasswordProtected($padID)
-  {
-    return $this->HTTPCall("isPasswordProtected", "padID", $padID);
+  public function isPasswordProtected($padID){
+    return $this->call("isPasswordProtected", array(
+      "padID" => $padID
+    ));
   }
 }
-?> 
+
