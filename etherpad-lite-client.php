@@ -1,7 +1,13 @@
 <?php
 class EtherpadLiteClient {
 
-  const API_VERSION = 1;
+  const API_VERSION             = 1;
+
+  const CODE_OK                 = 0;
+  const CODE_INVALID_PARAMETERS = 1;
+  const CODE_INTERNAL_ERROR     = 2;
+  const CODE_INVALID_FUNCTION   = 3;
+  const CODE_INVALID_API_KEY    = 4;
 
   protected $apiKey = "";
   protected $baseUrl = "http://localhost:9001/api";
@@ -34,10 +40,36 @@ class EtherpadLiteClient {
     }
     
     $result = json_decode($result);
-    if ($result === NULL){
+    if ($result === null){
       throw new UnexpectedValueException("JSON response could not be decoded");
     }
-    return $result;
+    return $this->handleResult($result);
+  }
+
+  protected function handleResult($result){
+    if (!isset($result->code)){
+      throw new RuntimeException("API response has no code");
+    }
+    if (!isset($result->message)){
+      throw new RuntimeException("API response has no message");
+    }
+    if (!isset($result->data)){
+      throw new RuntimeException("API response has no data");
+    }
+
+    switch ($result->code){
+      case self::CODE_OK:
+        return $result->data;
+      case self::CODE_INVALID_PARAMETERS:
+      case self::CODE_INVALID_API_KEY:
+        throw new InvalidArgumentException($result->message);
+      case self::CODE_INTERNAL_ERROR:
+        throw new RuntimeException($result->message);
+      case self::CODE_INVALID_FUNCTION:
+        throw new BadFunctionCallException($result->message);
+      default:
+        throw new RuntimeException("An unexpected error occurred whilst handling the response");
+    }
   }
 
   // GROUPS
