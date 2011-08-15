@@ -4,7 +4,7 @@
 include 'etherpad-lite-client.php';
 
 // Create an instance
-$instance = new EtherpadLiteClient('M6CHsur1Ncu48OjkAE3KE6MwBrknht7F');
+$instance = new EtherpadLiteClient('EtherpadFTW','http://beta.etherpad.org/api');
 
 // All API calls return a JSON value, you should print_r the JSON to see more info.
 
