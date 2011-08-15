@@ -54,7 +54,7 @@ class EtherpadLiteClient {
       throw new RuntimeException("API response has no message");
     }
     if (!isset($result->data)){
-      throw new RuntimeException("API response has no data");
+      $result->data = null;
     }
 
     switch ($result->code){
