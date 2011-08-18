@@ -22,8 +22,12 @@ echo "The AuthorID is now $authorID\n\n";
 // BUG FOR PITA:: $instance->setText('testPad','Hello world');
 
 /* Example: Create a new Pad */
-// $instance->createPad('testPad','Hello world');
-// Above will error out if the pad already exists.. Waiting on a fix from Tomnomnom
+try {
+  $instance->createPad('testPad','Hello world');
+} catch (Exception $e) {
+  // the pad already exists or something else went wrong
+  echo "Failed with message ". $e->getMessage();
+}
 
 /* Example: Delete Pad */
 // $instance->deletePad('testPad');
@@ -70,10 +74,14 @@ $padID = $newPad->padID;
 echo "Created new pad with padID: $padID\n\n";
 
 /* Example: List Pads from a group */
-$padList = $instance->listPads($groupID); // Errors out if the group does not exist
-echo "Available pads for this group:\n";
-var_dump($padList->padIDs);
-echo "\n";
+try {
+  $padList = $instance->listPads($groupID); 
+  echo "Available pads for this group:\n";
+  var_dump($padList->padIDs);
+  echo "\n";
+} catch (Exception $e) {
+  echo "Failed: ". $e->getMessage();
+}
 
 /* Example: Create Mapped Group -- This maps a humanly readable name to a groupID */
 // $mapGroup = $instance->getMappedGroup($groupID);
