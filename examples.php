@@ -1,13 +1,12 @@
 <pre>
 <?php
-error_reporting(-1);
 // Include the Class
 include 'etherpad-lite-client.php';
 
 // Create an instance
 $instance = new EtherpadLiteClient('EtherpadFTW','http://beta.etherpad.org/api'); // Example URL:  http://your.hostname.tld:8080/api
 
-// All API calls return a JSON value, you should print_r the JSON to see more info.
+// All API calls return a JSON value as documented in the API here: https://github.com/Pita/etherpad-lite/wiki/HTTP-API
 
 echo "<h1>Pads</h1>";
 
