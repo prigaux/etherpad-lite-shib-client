@@ -38,14 +38,6 @@ try {
 }
 
 
-/* Example: Delete Pad */
-try {
-  $instance->deletePad('testPad');
-} catch (Exception $e) {
-  // the pad doesn't exist?
-  echo "\n\ndeletePad Failed with message ". $e->getMessage();
-}
-
 /* Example: Get Ready Only ID of a pad */
 try {
   $readOnlyID = $instance->getReadOnlyID('testPad');
@@ -107,7 +99,15 @@ try {
   echo "End of Pad Text\n\n<hr>";
 } catch (Exception $e) {
   // the pad already exists or something else went wrong
-  echo "\n\nisgetText Failed with message ". $e->getMessage();
+  echo "\n\ngetText Failed with message ". $e->getMessage();
+}
+
+/* Example: Delete Pad */
+try {
+  $instance->deletePad('testPad');
+} catch (Exception $e) {
+  // the pad doesn't exist?
+  echo "\n\ndeletePad Failed with message ". $e->getMessage();
 }
 
 echo "<h1>Groups</h1>";
