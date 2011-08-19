@@ -28,7 +28,6 @@ class EtherpadLiteClient {
       $arguments
     );
     $url = $this->baseUrl."/".self::API_VERSION."/".$function."?".http_build_query($query);
-
     // not all PHP installs have access to curl
     if (function_exists('curl_init')){
       $c = curl_init($url);
@@ -159,7 +158,7 @@ class EtherpadLiteClient {
 
   // returns all sessions of a group 
   public function listSessionsOfGroup($groupID){
-    return $this->call("listSessionOfGroup", array(
+    return $this->call("listSessionsOfGroup", array(
       "groupID" => $groupID
     ));
   }
