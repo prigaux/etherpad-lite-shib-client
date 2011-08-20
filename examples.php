@@ -20,8 +20,15 @@ echo "The AuthorID is now $authorID\n\n";
   echo "\n\ncreateAuthor Failed with message ". $e->getMessage();
 }
 
-/* Example: get Mapped Author */
-// Bug this is not written yet
+/* Example: get Mapped Author ID based on a value from your web application such as the userID */
+try {
+  $authormap = $instance->createAuthorIfNotExistsFor('John McLear', 'Cake');  // This would show my local UserID mapping John McLear as Cake on Etherpad
+} catch (Exception $e) {
+  echo "\n\ncreateAuthorIfNotExistsFor Failed with message ". $e->getMessage();
+}
+
+//cake 
+
 
 /* Example: Create a new Pad */
 try {
@@ -143,8 +150,11 @@ try {
 }
 
 /* Example: Create Mapped Group -- This maps a humanly readable name to a groupID */
-// $mapGroup = $instance->getMappedGroup($groupID);
-// BUG This bit is confusing as hell and the PHP function doesn't exist in the class - Waitnig on original author to write it
+try {
+  $mapGroup = $instance->createGroupIfNotExistsFor("Guests");
+} catch (Exception $e) {
+  echo "\n\ndeleteGroupFailed: ". $e->getMessage();
+}
 
 /* Example: Delete a Group */
 try {
