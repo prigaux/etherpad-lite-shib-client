@@ -81,6 +81,7 @@ if ($action){ // if an action is set then lets do it.
   {
     $name = $_GET["name"];
     try {
+      $name = urldecode($name);
       $instance->deletePad($name);
     } catch (Exception $e) {
       // the pad doesn't exist?
@@ -132,6 +133,7 @@ foreach($padList as $pad => $key){  // For each pad in the object
   $padname = $padname[1];
   $padContents = $instance->getText($pad); // Get the pad contents
   $contents = $padContents->text;
+  $pad = urlencode($pad);
   echo "<div class='pad'>";
   echo "<h1><a href=$host/p/$pad>$padname</a></h1>";
   echo " - <h2><a onClick='$(\"#contents$count\").slideDown();'>Preview</a></h2><br/>";
