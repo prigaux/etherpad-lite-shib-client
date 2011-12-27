@@ -198,11 +198,21 @@ class EtherpadLiteClient {
   // Pad content can be updated and retrieved through the API
 
   // returns the text of a pad 
-  // should take optional $rev
-  public function getText($padID){
-    return $this->get("getText", array(
-      "padID" => $padID
-    ));
+  public function getText($padID, $rev=null){
+    $params = array("padID" => $padID);
+    if (isset($rev)){
+      $params["rev"] = $rev;
+    }
+    return $this->get("getText", $params);
+  }
+
+  // returns the text of a pad as html
+  public function getHTML($padID, $rev=null){
+    $params = array("padID" => $padID);
+    if (isset($rev)){
+      $params["rev"] = $rev;
+    }
+    return $this->get("getHTML", $params);
   }
 
   // sets the text of a pad 
@@ -210,6 +220,14 @@ class EtherpadLiteClient {
     return $this->post("setText", array(
       "padID" => $padID, 
       "text"  => $text
+    ));
+  }
+
+  // sets the html text of a pad 
+  public function setHTML($padID, $html){
+    return $this->post("setHTML", array(
+      "padID" => $padID, 
+      "html"  => $html
     ));
   }
 
