@@ -32,7 +32,7 @@ class EtherpadLiteClient {
 
   protected function call($function, array $arguments = array(), $method = 'GET'){
     $arguments['apikey'] = $this->apiKey;
-    $arguments = http_build_query($arguments);
+    $arguments = http_build_query($arguments, '', '&');
     $url = $this->baseUrl."/".self::API_VERSION."/".$function;
     if ($method !== 'POST'){
       $url .=  "?".$arguments;
