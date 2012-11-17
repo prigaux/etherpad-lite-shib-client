@@ -1,7 +1,7 @@
 <?php
 class EtherpadLiteClient {
 
-  const API_VERSION             = 1;
+  const API_VERSION             = '1.1';
 
   const CODE_OK                 = 0;
   const CODE_INVALID_PARAMETERS = 1;
@@ -138,6 +138,11 @@ class EtherpadLiteClient {
     ));
   }
 
+  // list all groups
+  public function listAllGroups(){
+    return $this->get("listAllGroups");
+  }
+
   // AUTHORS
   // Theses authors are bind to the attributes the users choose (color and name). 
 
@@ -159,6 +164,13 @@ class EtherpadLiteClient {
   // returns the ids of all pads this author as edited
   public function listPadsOfAuthor($authorID){
     return $this->get("listPadsOfAuthor", array(
+      "authorID" => $authorID
+    ));
+  }
+
+  // Gets an author's name
+  public function getAuthorName($authorID){
+    return $this->get("getAuthorName", array(
       "authorID" => $authorID
     ));
   }
@@ -327,6 +339,21 @@ class EtherpadLiteClient {
   public function isPasswordProtected($padID){
     return $this->get("isPasswordProtected", array(
       "padID" => $padID
+    ));
+  }
+
+  // Get pad users
+  public function padUsers($padID){
+    return $this->get("padUsers", array(
+      "padID" => $padID
+    ));
+  }
+
+  // Send all clients a message
+  public function sendClientsMessage($padID, $msg){
+    return $this->post("sendClientsMessage", array(
+      "padID" => $padID,
+      "msg"   => $msg
     ));
   }
 }
