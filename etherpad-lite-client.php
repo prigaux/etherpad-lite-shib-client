@@ -51,6 +51,7 @@ class EtherpadLiteClient {
         curl_setopt($c, CURLOPT_POSTFIELDS, $arguments);
       }
       $result = curl_exec($c);
+      $error = curl_error($c);
       curl_close($c);
     // fallback to plain php
     } else {
@@ -64,7 +65,7 @@ class EtherpadLiteClient {
     }
     
     if(!$result){
-      throw new UnexpectedValueException("Empty or No Response from the server");
+      throw new UnexpectedValueException("Empty or No Response from the server: $error");
     }
     
     $result = json_decode($result);
