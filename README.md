@@ -50,7 +50,7 @@ See it live here: https://pad.univ-paris1.fr/
 
 # Etherpad Lite adaptations
 
-## disable ability for the user to modify its username
+## disable ability for the user to modify its username for group pads
     
     diff --git a/src/static/js/pad_userlist.js b/src/static/js/pad_userlist.js
     index d051182..83e813a 100644
@@ -61,13 +61,13 @@ See it live here: https://pad.univ-paris1.fr/
            $("#otheruserstable tr").remove();
      
     -      if (pad.getUserIsGuest())
-    +      if (pad.getUserIsGuest() && 0)
+    +      if (pad.getUserIsGuest() && !document.location.href.match(/\$/))
            {
              $("#myusernameedit").addClass('myusernameedithoverable');
              setUpEditable($("#myusernameedit"), function()
 
 
-## modify the shared link
+## for private group pags, export url is /ip/xxx instead of /p/xxx
 
     --- a/src/node/handler/PadMessageHandler.js
     +++ b/src/node/handler/PadMessageHandler.js
@@ -88,14 +88,15 @@ See it live here: https://pad.univ-paris1.fr/
            {
              var basePath = document.location.href.substring(0, document.location.href.indexOf("/p/"));
     -        var readonlyLink = basePath + "/p/" + clientVars.readOnlyId;
-    +        var readonlyLink = basePath + (clientVars.publicStatus ? "/p/" : "/ip/") + clientVars.readOnlyId;
+    +        var readonlyLink = basePath + (clientVars.publicStatus || !basePath.match(/\$/) ? "/p/" : "/ip/") + cli
+entVars.readOnlyId;
              $('#embedinput').val("<iframe name='embed_readonly' src='" + readonlyLink + "?showControls=true&showCha
              $('#linkinput').val(readonlyLink);
            }
            else
            {
              var padurl = window.location.href.split("?")[0];
-    +       if (!clientVars.publicStatus) padurl = padurl.replace('/p/', '/ip/');
+    +       if (!clientVars.publicStatus && padurl.match(/\$/)) padurl = padurl.replace('/p/', '/ip/');
              $('#embedinput').val("<iframe name='embed_readwrite' src='" + padurl + "?showControls=true&showChat=tru
              $('#linkinput').val(padurl);
            }
