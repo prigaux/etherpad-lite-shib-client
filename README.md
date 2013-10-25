@@ -88,8 +88,7 @@ See it live here: https://pad.univ-paris1.fr/
            {
              var basePath = document.location.href.substring(0, document.location.href.indexOf("/p/"));
     -        var readonlyLink = basePath + "/p/" + clientVars.readOnlyId;
-    +        var readonlyLink = basePath + (clientVars.publicStatus || !basePath.match(/\$/) ? "/p/" : "/ip/") + cli
-entVars.readOnlyId;
+    +        var readonlyLink = basePath + (clientVars.publicStatus || !basePath.match(/\$/) ? "/p/" : "/ip/") + clientVars.readOnlyId;
              $('#embedinput').val("<iframe name='embed_readonly' src='" + readonlyLink + "?showControls=true&showCha
              $('#linkinput').val(readonlyLink);
            }
